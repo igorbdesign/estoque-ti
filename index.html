@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WMS Corporativo de TI - Multinacional</title>
+  <title>WMS Corporativo de TI - Receita Federal Auto-CNPJ</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800 pb-16">
@@ -13,10 +13,10 @@
     <div class="max-w-3xl mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
       <div>
         <h1 class="text-sm font-bold flex items-center gap-2">🏢 WMS Corporativo TI</h1>
-        <p class="text-[10px] text-slate-400">Controle de Ativos, NF e Multi-Escritórios</p>
+        <p class="text-[10px] text-slate-400">Validação Automática de CNPJ via Receita Federal</p>
       </div>
 
-      <!-- Seletor de Escritório Moderno (Em Abas) -->
+      <!-- Seletor de Escritório Moderno -->
       <div class="flex bg-slate-800 p-1 rounded-lg border border-slate-700 text-xs">
         <button onclick="mudarEscritorioFiltro('TODOS')" id="filialTodos" class="px-3 py-1 rounded-md bg-indigo-600 font-bold text-white transition">🌐 Todos</button>
         <button onclick="mudarEscritorioFiltro('SP')" id="filialSP" class="px-2.5 py-1 rounded-md text-slate-300 hover:text-white transition">SP</button>
@@ -29,7 +29,7 @@
 
   <main class="max-w-3xl mx-auto p-4 space-y-4">
 
-    <!-- Navegação Principal do Sistema -->
+    <!-- Navegação Principal -->
     <div class="grid grid-cols-3 gap-2 bg-white p-1.5 rounded-xl border border-slate-200 shadow-sm text-xs font-bold text-center">
       <button onclick="mudarAba('entrada')" id="tabEntrada" class="py-2.5 rounded-lg bg-indigo-600 text-white transition">📥 1. Entrada por NF</button>
       <button onclick="mudarAba('saida')" id="tabSaida" class="py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition">📤 2. Atribuição / Saída</button>
@@ -38,19 +38,19 @@
 
     <!-- ================= ABA 1: ENTRADA POR NF ================= -->
     <div id="secaoEntrada" class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
-      <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Registro de Nota Fiscal & Recebimento</h2>
+      <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Dados do Documento Fiscal & Fornecedor</h2>
       
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div>
-          <label class="block text-xs font-medium text-slate-700 mb-1">Número da NF</label>
-          <input type="text" id="nfNumero" placeholder="Ex: 58921" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs" />
+          <label for="nfNumero" class="block text-xs font-medium text-slate-700 mb-1">Número da Nota Fiscal (NF) *</label>
+          <input type="text" id="nfNumero" placeholder="Ex: 104592" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs font-bold text-indigo-900 bg-indigo-50/30" />
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-700 mb-1">Número da PO (Opcional)</label>
+          <label for="nfPo" class="block text-xs font-medium text-slate-700 mb-1">Número da PO (Opcional)</label>
           <input type="text" id="nfPo" placeholder="Ex: PO-9921" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs" />
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-700 mb-1">Escritório de Destino</label>
+          <label for="nfEscritorio" class="block text-xs font-medium text-slate-700 mb-1">Escritório de Destino *</label>
           <select id="nfEscritorio" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs bg-white font-bold">
             <option value="SP">São Paulo (SP)</option>
             <option value="RJ">Rio de Janeiro (RJ)</option>
@@ -60,14 +60,19 @@
         </div>
       </div>
 
+      <!-- CNPJ com Busca Automática na Receita -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
-          <label class="block text-xs font-medium text-slate-700 mb-1">CNPJ do Fornecedor</label>
-          <input type="text" id="nfCnpj" oninput="buscarFornecedorHistorico(this.value)" placeholder="Digite o CNPJ..." class="w-full p-2.5 border border-slate-300 rounded-lg text-xs" />
+          <label for="nfCnpj" class="block text-xs font-medium text-slate-700 mb-1">CNPJ do Fornecedor *</label>
+          <div class="relative">
+            <input type="text" id="nfCnpj" maxlength="18" onkeyup="processarCNPJ(this.value)" placeholder="Digite os 14 números do CNPJ..." class="w-full p-2.5 border border-slate-300 rounded-lg text-xs font-mono font-bold" />
+            <span id="statusCnpjIcon" class="absolute right-2.5 top-2.5 text-xs"></span>
+          </div>
+          <span id="msgStatusCnpj" class="text-[10px] text-slate-500 mt-1 block">Digite o CNPJ para buscar a Razão Social na Receita.</span>
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-700 mb-1">Razão Social do Fornecedor</label>
-          <input type="text" id="nfFornecedor" placeholder="Ex: Dell Computadores do Brasil" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs bg-slate-50 font-semibold" />
+          <label for="nfFornecedor" class="block text-xs font-medium text-slate-700 mb-1">Razão Social (Oficial Receita Federal)</label>
+          <input type="text" id="nfFornecedor" readonly placeholder="Aguardando CNPJ válido..." class="w-full p-2.5 border border-slate-200 rounded-lg text-xs bg-slate-100 font-semibold text-slate-700 cursor-not-allowed" />
         </div>
       </div>
 
@@ -79,21 +84,20 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div class="md:col-span-2">
-            <label class="block text-xs font-medium text-slate-700 mb-1">Selecione o Produto (Catálogo Oficial)</label>
+            <label for="itemProduto" class="block text-xs font-medium text-slate-700 mb-1">Selecione o Produto (Catálogo Oficial)</label>
             <select id="itemProduto" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs bg-white font-medium">
-              <!-- Preenchido via Script com os 62 itens -->
+              <!-- Preenchido via JS com os 62 itens -->
             </select>
           </div>
           <div>
-            <label class="block text-xs font-medium text-slate-700 mb-1">Quantidade</label>
+            <label for="itemQtd" class="block text-xs font-medium text-slate-700 mb-1">Quantidade</label>
             <input type="number" id="itemQtd" value="1" min="1" onfocus="this.select()" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs font-bold text-indigo-700 text-center" />
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-medium text-slate-700 mb-1">Serial Numbers (SNs) - Opcional se faltar na entrega</label>
+          <label for="itemSns" class="block text-xs font-medium text-slate-700 mb-1">Serial Numbers (SNs) - Opcional se faltar na entrega</label>
           <textarea id="itemSns" rows="2" placeholder="Separe por vírgula ou quebra de linha (Ex: SN001, SN002)..." class="w-full p-2.5 border border-slate-300 rounded-lg text-xs font-mono"></textarea>
-          <span class="text-[10px] text-amber-600 font-medium">💡 Se não informar os SNs agora, o sistema criará o lote pendente de amarração para compliance.</span>
         </div>
 
         <button onclick="adicionarItemNaListaTemporaria()" class="w-full bg-slate-800 text-white py-2 rounded-lg font-bold text-xs hover:bg-slate-900 transition">
@@ -103,7 +107,7 @@
 
       <!-- Tabela de Itens Adicionados na NF Atual -->
       <div>
-        <h4 class="text-xs font-bold text-slate-500 mb-2">Itens na Nota Fiscal Atual:</h4>
+        <h4 class="text-xs font-bold text-slate-500 mb-2">Itens Incluídos nesta NF:</h4>
         <div id="containerItensTemporarios" class="text-xs space-y-1.5 bg-slate-50 p-3 rounded-lg border border-slate-200 min-h-[50px]">
           <p class="text-slate-400 italic text-center py-2">Nenhum item adicionado nesta NF ainda.</p>
         </div>
@@ -119,7 +123,7 @@
       <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Atribuição de Ativo (Entrega ao Colaborador)</h2>
 
       <div>
-        <label class="block text-xs font-medium text-slate-700 mb-1">Selecione o Ativo Disponível em Estoque</label>
+        <label for="ativoDisponivelSelect" class="block text-xs font-medium text-slate-700 mb-1">Selecione o Ativo Disponível em Estoque</label>
         <select id="ativoDisponivelSelect" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs bg-white font-medium">
           <option value="">Selecione um ativo...</option>
         </select>
@@ -127,11 +131,11 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
-          <label class="block text-xs font-medium text-slate-700 mb-1">Nome do Colaborador</label>
+          <label for="nomeColaborador" class="block text-xs font-medium text-slate-700 mb-1">Nome do Colaborador</label>
           <input type="text" id="nomeColaborador" placeholder="Ex: Ana Souza" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs" />
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-700 mb-1">E-mail Corporativo</label>
+          <label for="emailColaborador" class="block text-xs font-medium text-slate-700 mb-1">E-mail Corporativo</label>
           <input type="email" id="emailColaborador" placeholder="ana.souza@empresa.com" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs" />
         </div>
       </div>
@@ -172,7 +176,6 @@
   </main>
 
   <script>
-    // Catálogo Oficial Completo (62 itens)
     const CATALOGO_GERAL = [
       "Adaptador RJ45", "Ajuste Altura Monitor", "Almofada de Fone (Headset) - UN", "Apoio de Punho P/ teclado",
       "Cabo HDMI", "Cartucho HP 954XL Cleide - Amarelo", "Cartucho HP 954XL Cleide - Ciano", "Cartucho HP 954XL Cleide - Preto",
@@ -189,22 +192,16 @@
       "Suporte para notebook", "Tablet S10+", "Tablet S5+", "Tablet S6+", "Teclado"
     ];
 
-    // Banco de Dados Local Simulado (com suporte a histórico de fornecedores)
     let wmsData = {
       escritorioFiltro: "TODOS",
-      fornecedoresHistorico: {
-        "075": "Dell Computadores do Brasil",
-        "332": "Microsoft do Brasil",
-        "615": "Lenovo Tecnologia"
-      },
       itensTemporariosNF: [],
       ativos: [
-        { id: 1, modelo: "Notebook Latitude 7450", sn: "DL-7450-01", status: "Disponivel", colaborador: "-", nf: "45001", escritorio: "SP", fornecedor: "Dell" },
-        { id: 2, modelo: "Dockstation WD25", sn: "GERAL-01", status: "Disponivel", colaborador: "-", nf: "44900", escritorio: "RJ", fornecedor: "Lenovo" }
+        { id: 1, modelo: "Notebook Latitude 7450", sn: "DL-7450-01", status: "Disponivel", colaborador: "-", nf: "104592", escritorio: "SP", fornecedor: "Dell Computadores do Brasil Ltda" }
       ]
     };
 
-    // Inicialização do Select de Produtos
+    let tempoDigitacao = null;
+
     function inicializarCatalogo() {
       const select = document.getElementById('itemProduto');
       select.innerHTML = '';
@@ -214,6 +211,47 @@
         opt.textContent = prod;
         select.appendChild(opt);
       });
+    }
+
+    // Busca automática na Receita Federal via BrasilAPI
+    function processarCNPJ(valor) {
+      clearTimeout(tempoDigitacao);
+      const apenasNumeros = valor.replace(/\D/g, '');
+
+      const msgEl = document.getElementById('msgStatusCnpj');
+      const iconEl = document.getElementById('statusCnpjIcon');
+      const fornecedorInput = document.getElementById('nfFornecedor');
+
+      if (apenasNumeros.length === 14) {
+        msgEl.className = "text-[10px] text-indigo-600 font-bold block mt-1";
+        msgEl.textContent = "🔍 Consultando Receita Federal...";
+        iconEl.textContent = "⏳";
+
+        tempoDigitacao = setTimeout(() => {
+          fetch(`https://brasilapi.com.br/api/cnpj/v1/${apenasNumeros}`)
+            .then(res => {
+              if (!res.ok) throw new Error('CNPJ não encontrado');
+              return res.json();
+            })
+            .then(data => {
+              fornecedorInput.value = data.razao_social || data.nome_fantasia;
+              msgEl.className = "text-[10px] text-emerald-700 font-bold block mt-1";
+              msgEl.textContent = "✅ CNPJ Válido! Razão Social obtida da Receita Federal.";
+              iconEl.textContent = "✅";
+            })
+            .catch(err => {
+              fornecedorInput.value = "";
+              msgEl.className = "text-[10px] text-red-600 font-bold block mt-1";
+              msgEl.textContent = "❌ CNPJ não encontrado na Receita Federal. Verifique os números.";
+              iconEl.textContent = "❌";
+            });
+        }, 500);
+      } else {
+        fornecedorInput.value = "";
+        msgEl.className = "text-[10px] text-slate-500 block mt-1";
+        msgEl.textContent = "Digite os 14 números do CNPJ para buscar a Razão Social.";
+        iconEl.textContent = "";
+      }
     }
 
     function mudarAba(aba) {
@@ -242,7 +280,6 @@
     function mudarEscritorioFiltro(escritorio) {
       wmsData.escritorioFiltro = escritorio;
       
-      // Atualiza estilo visual dos botões de filtro
       ['TODOS', 'SP', 'RJ', 'MG', 'ES'].forEach(e => {
         const btn = document.getElementById('filial' + e);
         if (e === escritorio) {
@@ -252,4 +289,201 @@
         }
       });
 
-      const badge =
+      const badge = document.getElementById('filtroAtivoBadge');
+      badge.textContent = escritorio === 'TODOS' ? "Exibindo: Todos os Escritórios" : `Exibindo Filial: ${escritorio}`;
+      
+      renderizarEstoque();
+    }
+
+    function adicionarItemNaListaTemporaria() {
+      const produto = document.getElementById('itemProduto').value;
+      const qtd = parseInt(document.getElementById('itemQtd').value) || 1;
+      const rawSns = document.getElementById('itemSns').value.trim();
+      const snsArray = rawSns ? rawSns.split(/[\n,]+/).map(s => s.trim()).filter(s => s.length > 0) : [];
+
+      wmsData.itensTemporariosNF.push({
+        produto: produto,
+        quantidade: qtd,
+        sns: snsArray
+      });
+
+      document.getElementById('itemSns').value = '';
+      document.getElementById('itemQtd').value = '1';
+      renderizarItensTemporarios();
+    }
+
+    function renderizarItensTemporarios() {
+      const container = document.getElementById('containerItensTemporarios');
+      container.innerHTML = '';
+
+      if (wmsData.itensTemporariosNF.length === 0) {
+        container.innerHTML = '<p class="text-slate-400 italic text-center py-2">Nenhum item adicionado nesta NF ainda.</p>';
+        return;
+      }
+
+      wmsData.itensTemporariosNF.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = "flex justify-between items-center bg-white p-2 rounded border border-slate-200";
+        div.innerHTML = `
+          <div>
+            <span class="font-bold text-slate-800">${item.produto}</span>
+            <span class="text-[10px] text-slate-500 block">Qtd: <b>${item.quantidade}</b> | SNs informados: ${item.sns.length > 0 ? item.sns.join(', ') : '⚠️ Pendente amarração'}</span>
+          </div>
+          <button onclick="removerItemTemp(${index})" class="text-red-500 font-bold px-2 py-1 text-xs hover:bg-red-50 rounded">✕</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function removerItemTemp(index) {
+      wmsData.itensTemporariosNF.splice(index, 1);
+      renderizarItensTemporarios();
+    }
+
+    function finalizarEntradaNF() {
+      const nf = document.getElementById('nfNumero').value.trim();
+      const po = document.getElementById('nfPo').value.trim();
+      const escritorio = document.getElementById('nfEscritorio').value;
+      const fornecedor = document.getElementById('nfFornecedor').value.trim();
+      const cnpj = document.getElementById('nfCnpj').value.trim();
+
+      if (!nf) {
+        alert('Informe o número da Nota Fiscal (NF)!');
+        return;
+      }
+
+      if (!fornecedor) {
+        alert('Digite um CNPJ válido para validar a Razão Social da empresa fornecedora!');
+        return;
+      }
+
+      if (wmsData.itensTemporariosNF.length === 0) {
+        alert('Adicione pelo menos um item à Nota Fiscal!');
+        return;
+      }
+
+      wmsData.itensTemporariosNF.forEach(item => {
+        if (item.sns.length > 0) {
+          item.sns.forEach(sn => {
+            wmsData.ativos.push({
+              id: Date.now() + Math.random(),
+              modelo: item.produto,
+              sn: sn,
+              status: "Disponivel",
+              colaborador: "-",
+              nf: nf,
+              po: po,
+              escritorio: escritorio,
+              fornecedor: fornecedor
+            });
+          });
+        } else {
+          for (let i = 0; i < item.quantidade; i++) {
+            wmsData.ativos.push({
+              id: Date.now() + Math.random(),
+              modelo: item.produto,
+              sn: `PENDENTE-${Math.floor(Math.random() * 10000)}`,
+              status: "Disponivel",
+              colaborador: "-",
+              nf: nf,
+              po: po,
+              escritorio: escritorio,
+              fornecedor: fornecedor
+            });
+          }
+        }
+      });
+
+      alert(`✅ Entrada da NF ${nf} (${fornecedor}) registrada com sucesso no estoque de ${escritorio}!`);
+      wmsData.itensTemporariosNF = [];
+      document.getElementById('nfNumero').value = '';
+      document.getElementById('nfPo').value = '';
+      document.getElementById('nfCnpj').value = '';
+      document.getElementById('nfFornecedor').value = '';
+      document.getElementById('statusCnpjIcon').textContent = '';
+      document.getElementById('msgStatusCnpj').textContent = 'Digite os 14 números do CNPJ para buscar a Razão Social.';
+      renderizarItensTemporarios();
+      mudarAba('estoque');
+    }
+
+    function atualizarSelectAtivosDisponiveis() {
+      const select = document.getElementById('ativoDisponivelSelect');
+      select.innerHTML = '<option value="">Selecione um ativo...</option>';
+
+      const disponiveis = wmsData.ativos.filter(a => 
+        (wmsData.escritorioFiltro === 'TODOS' || a.escritorio === wmsData.escritorioFiltro) && 
+        a.status === 'Disponivel'
+      );
+
+      disponiveis.forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item.id;
+        opt.textContent = `[${item.escritorio}] ${item.modelo} (SN: ${item.sn})`;
+        select.appendChild(opt);
+      });
+    }
+
+    function registrarSaidaAtivo() {
+      const idAtivo = document.getElementById('ativoDisponivelSelect').value;
+      const colaborador = document.getElementById('nomeColaborador').value.trim();
+
+      if (!idAtivo || !colaborador) {
+        alert('Selecione um ativo e informe o colaborador!');
+        return;
+      }
+
+      const ativo = wmsData.ativos.find(a => a.id == idAtivo);
+      if (ativo) {
+        if (ativo.status !== 'Disponivel') {
+          alert('⚠️ Erro de Compliance: Este ativo já está em uso!');
+          return;
+        }
+
+        ativo.status = 'Em Uso';
+        ativo.colaborador = colaborador;
+        alert(`🔒 Ativo vinculado com sucesso a ${colaborador}! Saída registrada sem risco de estoque negativo.`);
+        document.getElementById('nomeColaborador').value = '';
+        document.getElementById('emailColaborador').value = '';
+        mudarAba('estoque');
+      }
+    }
+
+    function renderizarEstoque() {
+      const container = document.getElementById('tabelaEstoqueContainer');
+      container.innerHTML = '';
+
+      const filtrados = wmsData.ativos.filter(a => wmsData.escritorioFiltro === 'TODOS' || a.escritorio === wmsData.escritorioFiltro);
+
+      document.getElementById('statTotalEstoque').textContent = filtrados.length;
+      document.getElementById('statTotalDisponivel').textContent = filtrados.filter(a => a.status === 'Disponivel').length;
+      document.getElementById('statTotalEmUso').textContent = filtrados.filter(a => a.status === 'Em Uso').length;
+
+      if (filtrados.length === 0) {
+        container.innerHTML = '<p class="text-slate-400 italic text-center py-6">Nenhum ativo registrado para esta visualização.</p>';
+        return;
+      }
+
+      filtrados.forEach(item => {
+        const div = document.createElement('div');
+        div.className = "flex justify-between items-center bg-slate-50 p-2.5 rounded-lg border border-slate-200";
+        div.innerHTML = `
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="bg-slate-200 text-slate-700 font-bold px-1.5 py-0.5 rounded text-[9px]">${item.escritorio}</span>
+              <span class="font-bold text-slate-800">${item.modelo}</span>
+            </div>
+            <span class="text-[10px] text-slate-500 block">SN: <b class="text-indigo-600">${item.sn}</b> | NF: ${item.nf} | Forn: ${item.fornecedor}</span>
+          </div>
+          <div class="text-right">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${item.status === 'Disponivel' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${item.status}</span>
+            <span class="text-[10px] text-slate-600 block mt-0.5">👤 ${item.colaborador}</span>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    inicializarCatalogo();
+  </script>
+</body>
+</html>
