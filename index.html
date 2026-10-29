@@ -3,105 +3,167 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WMS TI - Protótipo Corporativo</title>
+  <title>WMS Corporativo de TI - Multinacional</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-100 min-h-screen text-slate-800 pb-12">
+<body class="bg-slate-100 min-h-screen text-slate-800 pb-16">
 
   <!-- Cabeçalho Corporativo -->
-  <header class="bg-slate-900 text-white p-4 shadow-md sticky top-0 z-10">
-    <div class="max-w-xl mx-auto flex justify-between items-center">
+  <header class="bg-slate-900 text-white p-4 shadow-md sticky top-0 z-20">
+    <div class="max-w-3xl mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
       <div>
         <h1 class="text-sm font-bold flex items-center gap-2">🏢 WMS Corporativo TI</h1>
-        <p class="text-[10px] text-slate-400">Ambiente Multinacional - M365 Compliance</p>
+        <p class="text-[10px] text-slate-400">Controle de Ativos, NF e Multi-Escritórios</p>
       </div>
-      <div>
-        <select id="escritorioGlobal" onchange="mudarEscritorio()" class="bg-slate-800 text-white border border-slate-700 text-xs rounded px-2 py-1 font-bold">
-          <option value="SP">Escritório: São Paulo (SP)</option>
-          <option value="RJ">Escritório: Rio de Janeiro (RJ)</option>
-          <option value="MG">Escritório: Minas Gerais (MG)</option>
-          <option value="ES">Escritório: Espírito Santo (ES)</option>
-        </select>
+
+      <!-- Seletor de Escritório Moderno (Em Abas) -->
+      <div class="flex bg-slate-800 p-1 rounded-lg border border-slate-700 text-xs">
+        <button onclick="mudarEscritorioFiltro('TODOS')" id="filialTodos" class="px-3 py-1 rounded-md bg-indigo-600 font-bold text-white transition">🌐 Todos</button>
+        <button onclick="mudarEscritorioFiltro('SP')" id="filialSP" class="px-2.5 py-1 rounded-md text-slate-300 hover:text-white transition">SP</button>
+        <button onclick="mudarEscritorioFiltro('RJ')" id="filialRJ" class="px-2.5 py-1 rounded-md text-slate-300 hover:text-white transition">RJ</button>
+        <button onclick="mudarEscritorioFiltro('MG')" id="filialMG" class="px-2.5 py-1 rounded-md text-slate-300 hover:text-white transition">MG</button>
+        <button onclick="mudarEscritorioFiltro('ES')" id="filialES" class="px-2.5 py-1 rounded-md text-slate-300 hover:text-white transition">ES</button>
       </div>
     </div>
   </header>
 
-  <main class="max-w-xl mx-auto p-4 space-y-4">
+  <main class="max-w-3xl mx-auto p-4 space-y-4">
 
-    <!-- Abas de Navegação -->
+    <!-- Navegação Principal do Sistema -->
     <div class="grid grid-cols-3 gap-2 bg-white p-1.5 rounded-xl border border-slate-200 shadow-sm text-xs font-bold text-center">
-      <button onclick="mudarAba('entrada')" id="tabEntrada" class="py-2 rounded-lg bg-indigo-600 text-white transition">📥 1. Entradas (NF/SN)</button>
-      <button onclick="mudarAba('saida')" id="tabSaida" class="py-2 rounded-lg text-slate-600 hover:bg-slate-50 transition">📤 2. Atribuição (Saída)</button>
-      <button onclick="mudarAba('estoque')" id="tabEstoque" class="py-2 rounded-lg text-slate-600 hover:bg-slate-50 transition">📦 3. Saldo & SNs</button>
+      <button onclick="mudarAba('entrada')" id="tabEntrada" class="py-2.5 rounded-lg bg-indigo-600 text-white transition">📥 1. Entrada por NF</button>
+      <button onclick="mudarAba('saida')" id="tabSaida" class="py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition">📤 2. Atribuição / Saída</button>
+      <button onclick="mudarAba('estoque')" id="tabEstoque" class="py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition">📦 3. Saldo & Inventário</button>
     </div>
 
-    <!-- ABA 1: ENTRADAS (NF, PO e SNs) -->
-    <div id="secaoEntrada" class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-4">
-      <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Entrada de Ativos por Nota Fiscal</h2>
+    <!-- ================= ABA 1: ENTRADA POR NF ================= -->
+    <div id="secaoEntrada" class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
+      <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Registro de Nota Fiscal & Recebimento</h2>
       
-      <div class="grid grid-cols-2 gap-3">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div>
           <label class="block text-xs font-medium text-slate-700 mb-1">Número da NF</label>
-          <input type="text" id="numNf" placeholder="Ex: 45982" class="w-full p-2 border border-slate-300 rounded-lg text-xs" />
+          <input type="text" id="nfNumero" placeholder="Ex: 58921" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs" />
         </div>
         <div>
           <label class="block text-xs font-medium text-slate-700 mb-1">Número da PO (Opcional)</label>
-          <input type="text" id="numPo" placeholder="Ex: PO-88392" class="w-full p-2 border border-slate-300 rounded-lg text-xs" />
+          <input type="text" id="nfPo" placeholder="Ex: PO-9921" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-700 mb-1">Escritório de Destino</label>
+          <select id="nfEscritorio" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs bg-white font-bold">
+            <option value="SP">São Paulo (SP)</option>
+            <option value="RJ">Rio de Janeiro (RJ)</option>
+            <option value="MG">Minas Gerais (MG)</option>
+            <option value="ES">Espírito Santo (ES)</option>
+          </select>
         </div>
       </div>
 
-      <div>
-        <label class="block text-xs font-medium text-slate-700 mb-1">Modelo do Equipamento</label>
-        <select id="modeloEntrada" class="w-full p-2 border border-slate-300 rounded-lg text-xs bg-white">
-          <option value="Notebook Latitude 7450">Notebook Latitude 7450</option>
-          <option value="Notebook Latitude 7440">Notebook Latitude 7440</option>
-          <option value="Dockstation WD25">Dockstation WD25</option>
-          <option value="Celular Samsung A36">Celular Samsung A36</option>
-        </select>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-medium text-slate-700 mb-1">CNPJ do Fornecedor</label>
+          <input type="text" id="nfCnpj" oninput="buscarFornecedorHistorico(this.value)" placeholder="Digite o CNPJ..." class="w-full p-2.5 border border-slate-300 rounded-lg text-xs" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-700 mb-1">Razão Social do Fornecedor</label>
+          <input type="text" id="nfFornecedor" placeholder="Ex: Dell Computadores do Brasil" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs bg-slate-50 font-semibold" />
+        </div>
       </div>
 
-      <div>
-        <label class="block text-xs font-medium text-slate-700 mb-1">Serial Numbers (SNs) - Um por linha ou separados por vírgula</label>
-        <textarea id="listaSns" rows="3" placeholder="SN001, SN002, SN003..." class="w-full p-2 border border-slate-300 rounded-lg text-xs font-mono"></textarea>
-        <span class="text-[10px] text-amber-600 font-medium">💡 Se faltarem SNs, o item entra pendente de compliance, mas o sistema permite avançar.</span>
+      <hr class="border-slate-100 my-2">
+
+      <!-- Adicionar Múltiplos Itens na mesma NF -->
+      <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+        <h3 class="text-xs font-bold text-slate-700">Adicionar Item à Nota Fiscal</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div class="md:col-span-2">
+            <label class="block text-xs font-medium text-slate-700 mb-1">Selecione o Produto (Catálogo Oficial)</label>
+            <select id="itemProduto" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs bg-white font-medium">
+              <!-- Preenchido via Script com os 62 itens -->
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-700 mb-1">Quantidade</label>
+            <input type="number" id="itemQtd" value="1" min="1" onfocus="this.select()" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs font-bold text-indigo-700 text-center" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-700 mb-1">Serial Numbers (SNs) - Opcional se faltar na entrega</label>
+          <textarea id="itemSns" rows="2" placeholder="Separe por vírgula ou quebra de linha (Ex: SN001, SN002)..." class="w-full p-2.5 border border-slate-300 rounded-lg text-xs font-mono"></textarea>
+          <span class="text-[10px] text-amber-600 font-medium">💡 Se não informar os SNs agora, o sistema criará o lote pendente de amarração para compliance.</span>
+        </div>
+
+        <button onclick="adicionarItemNaListaTemporaria()" class="w-full bg-slate-800 text-white py-2 rounded-lg font-bold text-xs hover:bg-slate-900 transition">
+          + Incluir Item na NF
+        </button>
       </div>
 
-      <button onclick="registrarEntrada()" class="w-full bg-indigo-600 text-white py-2.5 rounded-xl font-bold text-xs shadow hover:bg-indigo-700 transition">
-        + Registrar Entrada na NF
+      <!-- Tabela de Itens Adicionados na NF Atual -->
+      <div>
+        <h4 class="text-xs font-bold text-slate-500 mb-2">Itens na Nota Fiscal Atual:</h4>
+        <div id="containerItensTemporarios" class="text-xs space-y-1.5 bg-slate-50 p-3 rounded-lg border border-slate-200 min-h-[50px]">
+          <p class="text-slate-400 italic text-center py-2">Nenhum item adicionado nesta NF ainda.</p>
+        </div>
+      </div>
+
+      <button onclick="finalizarEntradaNF()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold text-sm shadow hover:bg-indigo-700 transition">
+        💾 Finalizar e Dar Entrada Oficial no Estoque
       </button>
     </div>
 
-    <!-- ABA 2: SAÍDA / ATRIBUIÇÃO (Vínculo ao Colaborador) -->
-    <div id="secaoSaida" class="hidden bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-4">
+    <!-- ================= ABA 2: SAÍDA / ATRIBUIÇÃO ================= -->
+    <div id="secaoSaida" class="hidden bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
       <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Atribuição de Ativo (Entrega ao Colaborador)</h2>
 
       <div>
         <label class="block text-xs font-medium text-slate-700 mb-1">Selecione o Ativo Disponível em Estoque</label>
-        <select id="ativoDisponivelSelect" class="w-full p-2 border border-slate-300 rounded-lg text-xs bg-white">
-          <option value="">Carregando ativos disponíveis...</option>
+        <select id="ativoDisponivelSelect" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs bg-white font-medium">
+          <option value="">Selecione um ativo...</option>
         </select>
       </div>
 
-      <div class="grid grid-cols-2 gap-3">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
           <label class="block text-xs font-medium text-slate-700 mb-1">Nome do Colaborador</label>
-          <input type="text" id="nomeColaborador" placeholder="Ex: Carlos Silva" class="w-full p-2 border border-slate-300 rounded-lg text-xs" />
+          <input type="text" id="nomeColaborador" placeholder="Ex: Ana Souza" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs" />
         </div>
         <div>
           <label class="block text-xs font-medium text-slate-700 mb-1">E-mail Corporativo</label>
-          <input type="email" id="emailColaborador" placeholder="carlos.silva@empresa.com" class="w-full p-2 border border-slate-300 rounded-lg text-xs" />
+          <input type="email" id="emailColaborador" placeholder="ana.souza@empresa.com" class="w-full p-2.5 border border-slate-300 rounded-lg text-xs" />
         </div>
       </div>
 
-      <button onclick="registrarSaida()" class="w-full bg-emerald-600 text-white py-2.5 rounded-xl font-bold text-xs shadow hover:bg-emerald-700 transition">
-        🔒 Vincular Ativo e Gerar Termo
+      <button onclick="registrarSaidaAtivo()" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-bold text-xs shadow hover:bg-emerald-700 transition">
+        🔒 Vincular Ativo com Trava Anti-Duplicidade
       </button>
     </div>
 
-    <!-- ABA 3: SALDO DE ESTOQUE E RASTREABILIDADE DE SNs -->
-    <div id="secaoEstoque" class="hidden bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-4">
-      <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Inventário por Serial Number & Custódia</h2>
-      
+    <!-- ================= ABA 3: SALDO & INVENTÁRIO ================= -->
+    <div id="secaoEstoque" class="hidden bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
+      <div class="flex justify-between items-center">
+        <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Inventário & Saldo Consolidado</h2>
+        <span id="filtroAtivoBadge" class="bg-indigo-50 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-full text-[10px] font-bold">Exibindo: Todos os Escritórios</span>
+      </div>
+
+      <!-- Resumo Rápido -->
+      <div class="grid grid-cols-3 gap-2 text-center">
+        <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+          <span class="text-[10px] text-slate-400 block font-semibold">Total em Estoque</span>
+          <span id="statTotalEstoque" class="text-base font-bold text-slate-800">0</span>
+        </div>
+        <div class="bg-emerald-50 p-2.5 rounded-lg border border-emerald-200">
+          <span class="text-[10px] text-emerald-700 block font-semibold">Disponíveis</span>
+          <span id="statTotalDisponivel" class="text-base font-bold text-emerald-800">0</span>
+        </div>
+        <div class="bg-amber-50 p-2.5 rounded-lg border border-amber-200">
+          <span class="text-[10px] text-amber-700 block font-semibold">Em Uso</span>
+          <span id="statTotalEmUso" class="text-base font-bold text-amber-800">0</span>
+        </div>
+      </div>
+
       <div id="tabelaEstoqueContainer" class="space-y-2 text-xs">
         <!-- Renderizado via JS -->
       </div>
@@ -110,19 +172,48 @@
   </main>
 
   <script>
-    // Estado Global simulando o Banco Relacional (Sharepoint / Firebase)
-    let bancoDados = {
-      escritorioAtual: "SP",
+    // Catálogo Oficial Completo (62 itens)
+    const CATALOGO_GERAL = [
+      "Adaptador RJ45", "Ajuste Altura Monitor", "Almofada de Fone (Headset) - UN", "Apoio de Punho P/ teclado",
+      "Cabo HDMI", "Cartucho HP 954XL Cleide - Amarelo", "Cartucho HP 954XL Cleide - Ciano", "Cartucho HP 954XL Cleide - Preto",
+      "Cartucho HP 964XL MP - Amarelo", "Cartucho HP 964XL MP - Ciano", "Cartucho HP 964XL MP - Magenta", "Cartucho HP 964XL MP - Preto",
+      "Cartucho T067 Canon ES - Amarelo", "Cartucho T067 Canon ES - Ciano", "Cartucho T067 Canon ES - Magenta", "Cartucho T067 Canon ES - Preto",
+      "Cartão de Memória MicroSD 128GB", "Celular - Modelos Anteriores", "Celular Motorola G10", "Celular Motorola G22",
+      "Celular Motorola G7", "Celular Motorola G8", "Celular Motorola G9", "Celular Samsung A36", "Crachá Provisorio",
+      "Dockstation Pro Smart (Workstation)", "Dockstation TB16 (Workstation)", "Dockstation WD15", "Dockstation WD19",
+      "Dockstation WD25 (Padrão)", "Fita Brady", "Fone de Ouvido Head Set USB", "Mochila", "Monitor Dell P2417H",
+      "Monitor LG 24MK430H", "Monitor Modelos Anteriores", "Monitor Samsung Essential S4", "Mouse", "Mousepad",
+      "Notebook Latitude 7410", "Notebook Latitude 7420", "Notebook Latitude 7440", "Notebook Latitude 7450",
+      "Notebook Mod. Anteriores (7400/7490/Outros)", "Notebook Pro 14 Plus", "Notebook Workstation", "Patch cord",
+      "Pen Drive 128GB", "Pen Drive 16GB Data Travel", "Pen Drive 16GB Fit", "Pen Drive 32GB Fit", "Pen Drive 64GB Data Travel",
+      "Suporte para notebook", "Tablet S10+", "Tablet S5+", "Tablet S6+", "Teclado"
+    ];
+
+    // Banco de Dados Local Simulado (com suporte a histórico de fornecedores)
+    let wmsData = {
+      escritorioFiltro: "TODOS",
+      fornecedoresHistorico: {
+        "075": "Dell Computadores do Brasil",
+        "332": "Microsoft do Brasil",
+        "615": "Lenovo Tecnologia"
+      },
+      itensTemporariosNF: [],
       ativos: [
-        { id: 1, modelo: "Notebook Latitude 7450", sn: "DL-7450-01", status: "Disponivel", colaborador: "-", nf: "45001", escritorio: "SP" },
-        { id: 2, modelo: "Notebook Latitude 7450", sn: "DL-7450-02", status: "Em Uso", colaborador: "Ana Souza", nf: "45001", escritorio: "SP" },
-        { id: 3, modelo: "Dockstation WD25", sn: "DK-25-99", status: "Disponivel", colaborador: "-", nf: "44900", escritorio: "SP" }
+        { id: 1, modelo: "Notebook Latitude 7450", sn: "DL-7450-01", status: "Disponivel", colaborador: "-", nf: "45001", escritorio: "SP", fornecedor: "Dell" },
+        { id: 2, modelo: "Dockstation WD25", sn: "GERAL-01", status: "Disponivel", colaborador: "-", nf: "44900", escritorio: "RJ", fornecedor: "Lenovo" }
       ]
     };
 
-    function mudarEscritorio() {
-      bancoDados.escritorioAtual = document.getElementById('escritorioGlobal').value;
-      atualizarInterface();
+    // Inicialização do Select de Produtos
+    function inicializarCatalogo() {
+      const select = document.getElementById('itemProduto');
+      select.innerHTML = '';
+      CATALOGO_GERAL.forEach(prod => {
+        const opt = document.createElement('option');
+        opt.value = prod;
+        opt.textContent = prod;
+        select.appendChild(opt);
+      });
     }
 
     function mudarAba(aba) {
@@ -130,134 +221,35 @@
       document.getElementById('secaoSaida').classList.add('hidden');
       document.getElementById('secaoEstoque').classList.add('hidden');
 
-      document.getElementById('tabEntrada').className = "py-2 rounded-lg text-slate-600 hover:bg-slate-50 transition";
-      document.getElementById('tabSaida').className = "py-2 rounded-lg text-slate-600 hover:bg-slate-50 transition";
-      document.getElementById('tabEstoque').className = "py-2 rounded-lg text-slate-600 hover:bg-slate-50 transition";
+      document.getElementById('tabEntrada').className = "py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition";
+      document.getElementById('tabSaida').className = "py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition";
+      document.getElementById('tabEstoque').className = "py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition";
 
       if (aba === 'entrada') {
         document.getElementById('secaoEntrada').classList.remove('hidden');
-        document.getElementById('tabEntrada').className = "py-2 rounded-lg bg-indigo-600 text-white transition";
+        document.getElementById('tabEntrada').className = "py-2.5 rounded-lg bg-indigo-600 text-white transition";
       } else if (aba === 'saida') {
         document.getElementById('secaoSaida').classList.remove('hidden');
-        document.getElementById('tabSaida').className = "py-2 rounded-lg bg-indigo-600 text-white transition";
-        atualizarSelectDisponiveis();
+        document.getElementById('tabSaida').className = "py-2.5 rounded-lg bg-indigo-600 text-white transition";
+        atualizarSelectAtivosDisponiveis();
       } else if (aba === 'estoque') {
         document.getElementById('secaoEstoque').classList.remove('hidden');
-        document.getElementById('tabEstoque').className = "py-2 rounded-lg bg-indigo-600 text-white transition";
+        document.getElementById('tabEstoque').className = "py-2.5 rounded-lg bg-indigo-600 text-white transition";
         renderizarEstoque();
       }
     }
 
-    function registrarEntrada() {
-      const nf = document.getElementById('numNf').value.trim();
-      const modelo = document.getElementById('modeloEntrada').value;
-      const rawSns = document.getElementById('listaSns').value.trim();
-
-      if (!nf || !rawSns) {
-        alert('Preencha o número da NF e pelo menos um Serial Number!');
-        return;
-      }
-
-      const snsArray = rawSns.split(/[\n,]+/).map(s => s.trim()).filter(s => s.length > 0);
-
-      snsArray.forEach(sn => {
-        // Verifica duplicidade de SN
-        const jaExiste = bancoDados.ativos.find(a => a.sn === sn);
-        if (!jaExiste) {
-          bancoDados.ativos.push({
-            id: Date.now() + Math.random(),
-            modelo: modelo,
-            sn: sn,
-            status: "Disponivel",
-            colaborador: "-",
-            nf: nf,
-            escritorio: bancoDados.escritorioAtual
-          });
+    function mudarEscritorioFiltro(escritorio) {
+      wmsData.escritorioFiltro = escritorio;
+      
+      // Atualiza estilo visual dos botões de filtro
+      ['TODOS', 'SP', 'RJ', 'MG', 'ES'].forEach(e => {
+        const btn = document.getElementById('filial' + e);
+        if (e === escritorio) {
+          btn.className = "px-3 py-1 rounded-md bg-indigo-600 font-bold text-white transition";
+        } else {
+          btn.className = "px-2.5 py-1 rounded-md text-slate-300 hover:text-white transition";
         }
       });
 
-      alert(`✅ Entrada da NF ${nf} registrada com sucesso para ${snsArray.length} ativo(s) em ${bancoDados.escritorioAtual}!`);
-      document.getElementById('numNf').value = '';
-      document.getElementById('listaSns').value = '';
-      mudarAba('estoque');
-    }
-
-    function atualizarSelectDisponiveis() {
-      const select = document.getElementById('ativoDisponivelSelect');
-      select.innerHTML = '';
-
-      const disponiveis = bancoDados.ativos.filter(a => a.escritorio === bancoDados.escritorioAtual && a.status === 'Disponivel');
-
-      if (disponiveis.length === 0) {
-        select.innerHTML = '<option value="">Nenhum ativo disponível neste escritório no momento</option>';
-        return;
-      }
-
-      disponiveis.forEach(item => {
-        const opt = document.createElement('option');
-        opt.value = item.sn;
-        opt.textContent = `${item.modelo} (SN: ${item.sn})`;
-        select.appendChild(opt);
-      });
-    }
-
-    function registrarSaida() {
-      const snSelecionado = document.getElementById('ativoDisponivelSelect').value;
-      const colaborador = document.getElementById('nomeColaborador').value.trim();
-
-      if (!snSelecionado || !colaborador) {
-        alert('Selecione um ativo e informe o nome do colaborador!');
-        return;
-      }
-
-      const ativo = bancoDados.ativos.find(a => a.sn === snSelecionado);
-      if (ativo) {
-        // Trava de segurança: impede saída se já estiver em uso
-        if (ativo.status !== 'Disponivel') {
-          alert('⚠️ Erro de Compliance: Este ativo já está atribuído a outro colaborador!');
-          return;
-        }
-
-        ativo.status = 'Em Uso';
-        ativo.colaborador = colaborador;
-        alert(`🔒 Ativo ${ativo.sn} vinculado com sucesso a ${colaborador}! Bloqueado contra saídas duplicadas.`);
-        document.getElementById('nomeColaborador').value = '';
-        document.getElementById('emailColaborador').value = '';
-        mudarAba('estoque');
-      }
-    }
-
-    function renderizarEstoque() {
-      const container = document.getElementById('tabelaEstoqueContainer');
-      container.innerHTML = '';
-
-      const filtrados = bancoDados.ativos.filter(a => a.escritorio === bancoDados.escritorioAtual);
-
-      if (filtrados.length === 0) {
-        container.innerHTML = '<p class="text-slate-400 italic text-center py-4">Nenhum ativo registrado neste escritório.</p>';
-        return;
-      }
-
-      filtrados.forEach(item => {
-        const div = document.createElement('div');
-        div.className = "flex justify-between items-center bg-slate-50 p-2.5 rounded-lg border border-slate-200";
-        div.innerHTML = `
-          <div>
-            <span class="font-bold text-slate-800">${item.modelo}</span>
-            <span class="text-[10px] text-slate-500 block">SN: <b class="text-indigo-600">${item.sn}</b> | NF: ${item.nf}</span>
-          </div>
-          <div class="text-right">
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${item.status === 'Disponivel' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${item.status}</span>
-            <span class="text-[10px] text-slate-600 block mt-0.5">👤 ${item.colaborador}</span>
-          </div>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    function atualizarInterface() {
-      // Atualiza visualizações se necessário
-    }
-  </script>
-</body>
-</html>
+      const badge =
